@@ -27,6 +27,8 @@ async function run() {
    
      const db = client.db('bill-management-system');
      const billsCollection = db.collection('bills');
+     const paymentsCollection = db.collection('paymentsCollection')
+
      app.get('/bills', async(req,res)=>{
         const result = await billsCollection.find().toArray(); 
         res.send(result);
@@ -40,6 +42,13 @@ async function run() {
       const result = await billsCollection.findOne({_id : new ObjectId(id)} );
       res.send(result);
      })
+     app.post('/payments-history', async (req, res) => {
+    
+        const payment = req.body;
+        const result = await paymentsCollection.insertOne(payment);
+        res.send(result);
+      
+     });
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
