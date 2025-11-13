@@ -42,6 +42,18 @@ async function run() {
       const result = await billsCollection.findOne({_id : new ObjectId(id)} );
       res.send(result);
      })
+     app.get('/myPayBills', async(req,res)=>{
+      const email = req.query.email;
+      const query = {};
+      if(email){
+        query.email = email;
+      }
+      const cursor = paymentsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+     })
+   
+
      app.post('/payments-history', async (req, res) => {
     
         const payment = req.body;
@@ -49,6 +61,23 @@ async function run() {
         res.send(result);
       
      });
+
+    app.put('/bills/:id', async(req,res)=>{
+      const {id} = req.params;
+      const newUpdatedData = req.body;
+      // console.log(newUpdatedData);
+      
+      const filter = {_id: new ObjectId(id)};
+      const update = {
+        $set : newUpdatedData
+      }
+
+      const result = await paymentsCollection.updateOne(filter,update)
+      res.send(result);
+
+     })
+
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
